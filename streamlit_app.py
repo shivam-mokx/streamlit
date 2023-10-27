@@ -9,7 +9,7 @@ import whisper
 import assemblyai as aai
 import zipfile
 import base64
-aai.settings.api_key =  os.environ.get("Assemblyai")
+aai.settings.api_key =  os.environ.get("ASSEMBLYAI_API_KEY")
 
 openai.api_key= os.environ.get("openai")
 
