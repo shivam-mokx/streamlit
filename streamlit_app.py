@@ -9,9 +9,9 @@ import whisper
 import assemblyai as aai
 import zipfile
 import base64
-aai.settings.api_key = "760a7ca3394d49c699c359ae4b73eaf4"
+aai.settings.api_key =  os.environ.get("Assemblyai")
 
-openai.api_key="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"
+openai.api_key= os.environ.get("openai")
 
 def video_audio(link):
 
