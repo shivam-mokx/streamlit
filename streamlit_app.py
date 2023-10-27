@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import csv
-from deep_translator import GoogleTranslator
+
 from pytube import YouTube
 import os
 import openai
