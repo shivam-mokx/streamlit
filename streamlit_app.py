@@ -77,65 +77,74 @@ def audio_to_text(link):
 
 
 def abstract_summary_extraction(transcription):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        temperature=0,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a highly skilled AI trained in language comprehension and summarization. I would like you to read the following text and summarize it into a concise abstract paragraph. Aim to retain the most important points, providing a coherent and readable summary that could help a person understand the main points of the discussion without needing to read the entire text. Please avoid unnecessary details or tangential points."
-            },
-            {
-                "role": "user",
-                "content": transcription
-            }
-        ]
-    )
-    
-    st.write("Summary done!")
-    return response['choices'][0]['message']['content']
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            temperature=0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a highly skilled AI trained in language comprehension and summarization. I would like you to read the following text and summarize it into a concise abstract paragraph. Aim to retain the most important points, providing a coherent and readable summary that could help a person understand the main points of the discussion without needing to read the entire text. Please avoid unnecessary details or tangential points."
+                },
+                {
+                    "role": "user",
+                    "content": transcription
+                }
+            ]
+        )
+        
+        st.write("Summary done!")
+        return response['choices'][0]['message']['content']
+    except openai.error.ServiceUnavailableError:
+        st.write("Got openai error which says 'The server is overloaded or not ready yet.' Please try again after sometimes.")
+        sys.exit("The OpenAI service is currently unavailable. Program terminated.")
+        
 
 def translator(transcription,lang):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        temperature=0,
-        messages=[
-            {
-                "role": "system",
-                "content": f"You are a highly skilled AI trained in language translation. I would like you to translate the following text into {lang} language."
-            },
-            {
-                "role": "user",
-                "content": transcription
-            }
-        ]
-    )
-    st.write("")
-    st.write("translation done!")
-    return response['choices'][0]['message']['content']
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            temperature=0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a highly skilled AI trained in language translation. I would like you to translate the following text into {lang} language."
+                },
+                {
+                    "role": "user",
+                    "content": transcription
+                }
+            ]
+        )
+        st.write("")
+        st.write("translation done!")
+        return response['choices'][0]['message']['content']
+    except openai.error.ServiceUnavailableError:
+        st.write("Got openai error which says 'The server is overloaded or not ready yet.' Please try again after sometimes.")
+        sys.exit("The OpenAI service is currently unavailable. Program terminated.")
 
 def hashtag(transcription):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        temperature=0,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a highly skilled AI trained in social media. I would like you to create hashtags based on the content."
-            },
-            {
-                "role": "user",
-                "content": transcription
-            }
-        ]
-    )
-    st.write("")
-    st.write("hashtag done!")
-    return response['choices'][0]['message']['content']
-
-
-
-
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            temperature=0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a highly skilled AI trained in social media. I would like you to create hashtags based on the content."
+                },
+                {
+                    "role": "user",
+                    "content": transcription
+                }
+            ]
+        )
+        st.write("")
+        st.write("hashtag done!")
+        return response['choices'][0]['message']['content']
+    except openai.error.ServiceUnavailableError:
+        st.write("Got openai error which says 'The server is overloaded or not ready yet.' Please try again after sometimes.")
+        sys.exit("The OpenAI service is currently unavailable. Program terminated.")
 
 def video_list(l):
     all_links=[]
