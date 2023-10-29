@@ -63,21 +63,22 @@ def audio_to_text(link):
     hindi=transcription['text']
     
     spl=split_string_into_chunks(hindi)
-    english=" ".join([translator(i) for i in spl])
+    english=" ".join([translator(i,"english") for i in spl])
     
     spl2=split_string_into_chunks(english)
     
     hashtg=" ".join([hashtag(i) for i in spl2])
-    summ=" ".join([abstract_summary_extraction(i) for i in spl2])
+    summ1=" ".join([abstract_summary_extraction(i) for i in spl2])
     
+    summ2=" ".join([translator(i,"hindi") for i in split_string_into_chunks(summ1)])
     
 
-    return hindi,english, summ,hashtg, audio
+    return hindi,english, summ1,summ2,hashtg, audio
 
 
 def abstract_summary_extraction(transcription):
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         temperature=0,
         messages=[
             {
@@ -94,14 +95,14 @@ def abstract_summary_extraction(transcription):
     st.write("Summary done!")
     return response['choices'][0]['message']['content']
 
-def translator(transcription):
+def translator(transcription,lang):
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         temperature=0,
         messages=[
             {
                 "role": "system",
-                "content": "You are a highly skilled AI trained in language translation. I would like you to translaate the following text into english language."
+                "content": f"You are a highly skilled AI trained in language translation. I would like you to translate the following text into {lang} language."
             },
             {
                 "role": "user",
@@ -115,7 +116,7 @@ def translator(transcription):
 
 def hashtag(transcription):
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         temperature=0,
         messages=[
             {
@@ -147,16 +148,16 @@ def video_list(l):
         
     for i,j in enumerate(l):
         st.write("Proceeding for Link: ",i+1)
-        a,b,c,d,e=audio_to_text(j)
-        ff=[j,a,b,c,d]
+        a,b,c,d,e,f=audio_to_text(j)
+        ff=[f"Link:{i} \n\n"+j,a,b,c,d,e]
         all_links.append(ff)
-        nn=subtitle(e,i)
+        en,hi=subtitle(f,i)
      # Append a single row to the CSV file
     with open(csv_file, 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(all_links)
         
-    return csv_file,nn
+    return csv_file,en,hi
         
 
 def subtitle(audio,i):
@@ -171,7 +172,16 @@ def subtitle(audio,i):
     with open(filename, "w") as file:
         file.write(a)
         
-    return filename
+    with open(filename, 'r', encoding='utf-8') as file:
+            srt_text = file.read()
+
+    spl=split_string_into_chunks(srt_text)
+    ab=" ".join([translator(i,"hindi") for i in spl])
+    filename2=f"subtitle_hindi_{i}.srt"
+    with open(filename2, "w") as file:
+        file.write(ab)
+    
+    return filename,filename2
 
 def zipping(files):
    
@@ -207,9 +217,9 @@ def main():
         
     # Add a button to download the DataFrame as a CSV file
     if st.button('Send'):
-        csv_file,nn=video_list(text_boxes)
+        csv_file,en,hi=video_list(text_boxes)
         # Read data from the CSV file
-        finall=[csv_file,nn]
+        finall=[csv_file,en,hi]
         # Offer the CSV string for download
         zip_file_path = zipping(finall)
        
