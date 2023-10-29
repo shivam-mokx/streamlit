@@ -78,7 +78,7 @@ def audio_to_text(link):
 
 def abstract_summary_extraction(transcription):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         temperature=0,
         messages=[
             {
@@ -97,7 +97,7 @@ def abstract_summary_extraction(transcription):
 
 def translator(transcription,lang):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         temperature=0,
         messages=[
             {
@@ -116,7 +116,7 @@ def translator(transcription,lang):
 
 def hashtag(transcription):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         temperature=0,
         messages=[
             {
